@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.1
-Release  : 1
+Release  : 2
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Summary  : Free Lossless Audio Codec Library
