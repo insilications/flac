@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.1
-Release  : 3
+Release  : 4
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Summary  : Free Lossless Audio Codec Library
@@ -13,6 +13,7 @@ License  : BSD-3-Clause GFDL-1.2 GPL-2.0 LGPL-2.1
 Requires: flac-bin
 Requires: flac-lib
 Requires: flac-doc
+BuildRequires : doxygen
 BuildRequires : libogg-dev
 BuildRequires : nasm-bin
 
