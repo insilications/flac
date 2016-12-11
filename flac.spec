@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.1
-Release  : 4
+Release  : 5
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Summary  : Free Lossless Audio Codec Library
@@ -74,10 +74,12 @@ lib components for the flac package.
 %setup -q -n flac-1.3.1
 
 %build
+export LANG=C
 %configure --disable-static
 make V=1  %{?_smp_mflags}
 
 %check
+export LANG=C
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost
@@ -111,8 +113,10 @@ rm -rf %{buildroot}
 /usr/include/FLAC/ordinals.h
 /usr/include/FLAC/stream_decoder.h
 /usr/include/FLAC/stream_encoder.h
-/usr/lib64/*.so
-/usr/lib64/pkgconfig/*.pc
+/usr/lib64/libFLAC++.so
+/usr/lib64/libFLAC.so
+/usr/lib64/pkgconfig/flac++.pc
+/usr/lib64/pkgconfig/flac.pc
 /usr/share/aclocal/*.m4
 
 %files doc
@@ -122,4 +126,7 @@ rm -rf %{buildroot}
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/*.so.*
+/usr/lib64/libFLAC++.so.6
+/usr/lib64/libFLAC++.so.6.3.0
+/usr/lib64/libFLAC.so.8
+/usr/lib64/libFLAC.so.8.3.0
