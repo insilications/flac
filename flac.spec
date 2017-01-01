@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.1
-Release  : 7
+Release  : 8
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Summary  : Free Lossless Audio Codec Library
@@ -102,7 +102,7 @@ popd
 
 %build
 export LANG=C
-export SOURCE_DATE_EPOCH=1483284847
+export SOURCE_DATE_EPOCH=1483291110
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-semantic-interposition -ftree-loop-vectorize "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-semantic-interposition -ftree-loop-vectorize "
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-semantic-interposition -ftree-loop-vectorize "
