@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.1
-Release  : 6
+Release  : 7
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.1.tar.xz
 Summary  : Free Lossless Audio Codec Library
@@ -64,6 +64,7 @@ Summary: dev32 components for the flac package.
 Group: Default
 Requires: flac-lib32
 Requires: flac-bin
+Requires: flac-dev
 
 %description dev32
 dev32 components for the flac package.
@@ -101,14 +102,20 @@ popd
 
 %build
 export LANG=C
+export SOURCE_DATE_EPOCH=1483284847
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-semantic-interposition -ftree-loop-vectorize "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-semantic-interposition -ftree-loop-vectorize "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-semantic-interposition -ftree-loop-vectorize "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffast-math -fno-semantic-interposition -ftree-loop-vectorize "
 %configure --disable-static
 make V=1  %{?_smp_mflags}
 
 pushd ../build32/
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
 export CFLAGS="$CFLAGS -m32"
 export CXXFLAGS="$CXXFLAGS -m32"
 export LDFLAGS="$LDFLAGS -m32"
-%configure --disable-static   --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
+%configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make V=1  %{?_smp_mflags}
 popd
 %check
@@ -125,7 +132,7 @@ pushd ../build32/
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
 then
 pushd %{buildroot}/usr/lib32/pkgconfig
-for i in *.pc ; do mv $i 32$i ; done
+for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
 popd
@@ -167,6 +174,8 @@ popd
 /usr/lib32/libFLAC.so
 /usr/lib32/pkgconfig/32flac++.pc
 /usr/lib32/pkgconfig/32flac.pc
+/usr/lib32/pkgconfig/flac++.pc
+/usr/lib32/pkgconfig/flac.pc
 
 %files doc
 %defattr(-,root,root,-)
