@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.2
-Release  : 18
+Release  : 19
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Summary  : Free Lossless Audio Codec Library
@@ -12,14 +12,15 @@ Group    : Development/Tools
 License  : BSD-3-Clause GFDL-1.2 GPL-2.0 LGPL-2.1
 Requires: flac-bin
 Requires: flac-lib
-Requires: flac-data
 Requires: flac-doc
+BuildRequires : docbook-utils
 BuildRequires : doxygen
 BuildRequires : gcc-dev32
 BuildRequires : gcc-libgcc32
 BuildRequires : gcc-libstdc++32
 BuildRequires : glibc-dev32
 BuildRequires : glibc-libc32
+BuildRequires : libogg-dev
 BuildRequires : libogg-dev32
 BuildRequires : nasm-bin
 
@@ -44,18 +45,9 @@ BuildRequires : nasm-bin
 %package bin
 Summary: bin components for the flac package.
 Group: Binaries
-Requires: flac-data
 
 %description bin
 bin components for the flac package.
-
-
-%package data
-Summary: data components for the flac package.
-Group: Data
-
-%description data
-data components for the flac package.
 
 
 %package dev
@@ -63,7 +55,6 @@ Summary: dev components for the flac package.
 Group: Development
 Requires: flac-lib
 Requires: flac-bin
-Requires: flac-data
 Provides: flac-devel
 
 %description dev
@@ -75,7 +66,6 @@ Summary: dev32 components for the flac package.
 Group: Default
 Requires: flac-lib32
 Requires: flac-bin
-Requires: flac-data
 Requires: flac-dev
 
 %description dev32
@@ -93,7 +83,6 @@ doc components for the flac package.
 %package lib
 Summary: lib components for the flac package.
 Group: Libraries
-Requires: flac-data
 
 %description lib
 lib components for the flac package.
@@ -102,7 +91,6 @@ lib components for the flac package.
 %package lib32
 Summary: lib32 components for the flac package.
 Group: Default
-Requires: flac-data
 
 %description lib32
 lib32 components for the flac package.
@@ -125,7 +113,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1514736468
+export SOURCE_DATE_EPOCH=1522964211
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
@@ -141,6 +129,7 @@ export LDFLAGS="$LDFLAGS -m32"
 %configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
+unset PKG_CONFIG_PATH
 pushd ../buildavx2/
 export CFLAGS="$CFLAGS -m64 -march=haswell"
 export CXXFLAGS="$CXXFLAGS -m64 -march=haswell"
@@ -148,6 +137,7 @@ export LDFLAGS="$LDFLAGS -m64 -march=haswell"
 %configure --disable-static    --libdir=/usr/lib64/haswell --bindir=/usr/bin/haswell
 make  %{?_smp_mflags}
 popd
+unset PKG_CONFIG_PATH
 pushd ../buildavx512/
 export CFLAGS="$CFLAGS -m64 -march=skylake-avx512"
 export CXXFLAGS="$CXXFLAGS -m64 -march=skylake-avx512"
@@ -163,7 +153,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1514736468
+export SOURCE_DATE_EPOCH=1522964211
 rm -rf %{buildroot}
 pushd ../build32/
 %make_install32
@@ -186,8 +176,6 @@ popd
 %defattr(-,root,root,-)
 /usr/lib64/haswell/avx512_1/pkgconfig/flac++.pc
 /usr/lib64/haswell/avx512_1/pkgconfig/flac.pc
-/usr/lib64/haswell/pkgconfig/flac++.pc
-/usr/lib64/haswell/pkgconfig/flac.pc
 
 %files bin
 %defattr(-,root,root,-)
@@ -198,8 +186,42 @@ popd
 /usr/bin/haswell/metaflac
 /usr/bin/metaflac
 
-%files data
+%files dev
 %defattr(-,root,root,-)
+/usr/include/FLAC++/all.h
+/usr/include/FLAC++/decoder.h
+/usr/include/FLAC++/encoder.h
+/usr/include/FLAC++/export.h
+/usr/include/FLAC++/metadata.h
+/usr/include/FLAC/all.h
+/usr/include/FLAC/assert.h
+/usr/include/FLAC/callback.h
+/usr/include/FLAC/export.h
+/usr/include/FLAC/format.h
+/usr/include/FLAC/metadata.h
+/usr/include/FLAC/ordinals.h
+/usr/include/FLAC/stream_decoder.h
+/usr/include/FLAC/stream_encoder.h
+/usr/lib64/haswell/libFLAC.so
+/usr/lib64/libFLAC++.so
+/usr/lib64/libFLAC.so
+/usr/lib64/pkgconfig/flac++.pc
+/usr/lib64/pkgconfig/flac.pc
+/usr/share/aclocal/*.m4
+
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libFLAC++.so
+/usr/lib32/libFLAC.so
+/usr/lib32/pkgconfig/32flac++.pc
+/usr/lib32/pkgconfig/32flac.pc
+/usr/lib32/pkgconfig/flac++.pc
+/usr/lib32/pkgconfig/flac.pc
+
+%files doc
+%defattr(-,root,root,-)
+%doc /usr/share/doc/flac/*
+%doc /usr/share/man/man1/*
 /usr/share/doc/flac-1.3.2/FLAC.tag
 /usr/share/doc/flac-1.3.2/html/api/_09_2all_8h_source.html
 /usr/share/doc/flac-1.3.2/html/api/_09_2export_8h.html
@@ -465,54 +487,11 @@ popd
 /usr/share/doc/flac-1.3.2/html/license.html
 /usr/share/doc/flac-1.3.2/html/ogg_mapping.html
 
-%files dev
-%defattr(-,root,root,-)
-/usr/include/FLAC++/all.h
-/usr/include/FLAC++/decoder.h
-/usr/include/FLAC++/encoder.h
-/usr/include/FLAC++/export.h
-/usr/include/FLAC++/metadata.h
-/usr/include/FLAC/all.h
-/usr/include/FLAC/assert.h
-/usr/include/FLAC/callback.h
-/usr/include/FLAC/export.h
-/usr/include/FLAC/format.h
-/usr/include/FLAC/metadata.h
-/usr/include/FLAC/ordinals.h
-/usr/include/FLAC/stream_decoder.h
-/usr/include/FLAC/stream_encoder.h
-/usr/lib64/haswell/libFLAC++.so
-/usr/lib64/haswell/libFLAC.so
-/usr/lib64/libFLAC++.so
-/usr/lib64/libFLAC.so
-/usr/lib64/pkgconfig/flac++.pc
-/usr/lib64/pkgconfig/flac.pc
-/usr/share/aclocal/*.m4
-
-%files dev32
-%defattr(-,root,root,-)
-/usr/lib32/libFLAC++.so
-/usr/lib32/libFLAC.so
-/usr/lib32/pkgconfig/32flac++.pc
-/usr/lib32/pkgconfig/32flac.pc
-/usr/lib32/pkgconfig/flac++.pc
-/usr/lib32/pkgconfig/flac.pc
-
-%files doc
-%defattr(-,root,root,-)
-%doc /usr/share/doc/flac/*
-%doc /usr/share/man/man1/*
-
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/haswell/avx512_1/libFLAC++.so
-/usr/lib64/haswell/avx512_1/libFLAC++.so.6
-/usr/lib64/haswell/avx512_1/libFLAC++.so.6.3.0
 /usr/lib64/haswell/avx512_1/libFLAC.so
 /usr/lib64/haswell/avx512_1/libFLAC.so.8
 /usr/lib64/haswell/avx512_1/libFLAC.so.8.3.0
-/usr/lib64/haswell/libFLAC++.so.6
-/usr/lib64/haswell/libFLAC++.so.6.3.0
 /usr/lib64/haswell/libFLAC.so.8
 /usr/lib64/haswell/libFLAC.so.8.3.0
 /usr/lib64/libFLAC++.so.6
