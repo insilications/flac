@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.2
-Release  : 19
+Release  : 20
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Summary  : Free Lossless Audio Codec Library
@@ -113,7 +113,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1522964211
+export SOURCE_DATE_EPOCH=1523289441
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
@@ -153,7 +153,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1522964211
+export SOURCE_DATE_EPOCH=1523289441
 rm -rf %{buildroot}
 pushd ../build32/
 %make_install32
@@ -174,8 +174,6 @@ popd
 
 %files
 %defattr(-,root,root,-)
-/usr/lib64/haswell/avx512_1/pkgconfig/flac++.pc
-/usr/lib64/haswell/avx512_1/pkgconfig/flac.pc
 
 %files bin
 %defattr(-,root,root,-)
