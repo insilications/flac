@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.2
-Release  : 21
+Release  : 22
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Summary  : Free Lossless Audio Codec Library
@@ -23,6 +23,7 @@ BuildRequires : glibc-libc32
 BuildRequires : libogg-dev
 BuildRequires : libogg-dev32
 BuildRequires : nasm-bin
+Patch1: cve-2017-6888.patch
 
 %description
 /* FLAC - Free Lossless Audio Codec
@@ -98,6 +99,7 @@ lib32 components for the flac package.
 
 %prep
 %setup -q -n flac-1.3.2
+%patch1 -p1
 pushd ..
 cp -a flac-1.3.2 build32
 popd
@@ -113,11 +115,11 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1523289441
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -ftree-loop-vectorize "
+export SOURCE_DATE_EPOCH=1529079037
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
 %configure --disable-static
 make  %{?_smp_mflags}
 
@@ -129,7 +131,6 @@ export LDFLAGS="$LDFLAGS -m32"
 %configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
-unset PKG_CONFIG_PATH
 pushd ../buildavx2/
 export CFLAGS="$CFLAGS -m64 -march=haswell"
 export CXXFLAGS="$CXXFLAGS -m64 -march=haswell"
@@ -137,7 +138,6 @@ export LDFLAGS="$LDFLAGS -m64 -march=haswell"
 %configure --disable-static    --libdir=/usr/lib64/haswell --bindir=/usr/bin/haswell
 make  %{?_smp_mflags}
 popd
-unset PKG_CONFIG_PATH
 pushd ../buildavx512/
 export CFLAGS="$CFLAGS -m64 -march=skylake-avx512"
 export CXXFLAGS="$CXXFLAGS -m64 -march=skylake-avx512"
@@ -153,7 +153,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1523289441
+export SOURCE_DATE_EPOCH=1529079037
 rm -rf %{buildroot}
 pushd ../build32/
 %make_install32
@@ -217,7 +217,7 @@ popd
 /usr/lib32/pkgconfig/flac.pc
 
 %files doc
-%defattr(-,root,root,-)
+%defattr(0644,root,root,0755)
 %doc /usr/share/doc/flac/*
 %doc /usr/share/man/man1/*
 /usr/share/doc/flac-1.3.2/FLAC.tag
