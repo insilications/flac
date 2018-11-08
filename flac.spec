@@ -4,15 +4,16 @@
 #
 Name     : flac
 Version  : 1.3.2
-Release  : 22
+Release  : 23
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Summary  : Free Lossless Audio Codec Library
 Group    : Development/Tools
 License  : BSD-3-Clause GFDL-1.2 GPL-2.0 LGPL-2.1
-Requires: flac-bin
-Requires: flac-lib
-Requires: flac-doc
+Requires: flac-bin = %{version}-%{release}
+Requires: flac-lib = %{version}-%{release}
+Requires: flac-license = %{version}-%{release}
+Requires: flac-man = %{version}-%{release}
 BuildRequires : docbook-utils
 BuildRequires : doxygen
 BuildRequires : gcc-dev32
@@ -46,6 +47,8 @@ Patch1: cve-2017-6888.patch
 %package bin
 Summary: bin components for the flac package.
 Group: Binaries
+Requires: flac-license = %{version}-%{release}
+Requires: flac-man = %{version}-%{release}
 
 %description bin
 bin components for the flac package.
@@ -54,9 +57,9 @@ bin components for the flac package.
 %package dev
 Summary: dev components for the flac package.
 Group: Development
-Requires: flac-lib
-Requires: flac-bin
-Provides: flac-devel
+Requires: flac-lib = %{version}-%{release}
+Requires: flac-bin = %{version}-%{release}
+Provides: flac-devel = %{version}-%{release}
 
 %description dev
 dev components for the flac package.
@@ -65,9 +68,9 @@ dev components for the flac package.
 %package dev32
 Summary: dev32 components for the flac package.
 Group: Default
-Requires: flac-lib32
-Requires: flac-bin
-Requires: flac-dev
+Requires: flac-lib32 = %{version}-%{release}
+Requires: flac-bin = %{version}-%{release}
+Requires: flac-dev = %{version}-%{release}
 
 %description dev32
 dev32 components for the flac package.
@@ -76,6 +79,7 @@ dev32 components for the flac package.
 %package doc
 Summary: doc components for the flac package.
 Group: Documentation
+Requires: flac-man = %{version}-%{release}
 
 %description doc
 doc components for the flac package.
@@ -84,6 +88,7 @@ doc components for the flac package.
 %package lib
 Summary: lib components for the flac package.
 Group: Libraries
+Requires: flac-license = %{version}-%{release}
 
 %description lib
 lib components for the flac package.
@@ -92,9 +97,26 @@ lib components for the flac package.
 %package lib32
 Summary: lib32 components for the flac package.
 Group: Default
+Requires: flac-license = %{version}-%{release}
 
 %description lib32
 lib32 components for the flac package.
+
+
+%package license
+Summary: license components for the flac package.
+Group: Default
+
+%description license
+license components for the flac package.
+
+
+%package man
+Summary: man components for the flac package.
+Group: Default
+
+%description man
+man components for the flac package.
 
 
 %prep
@@ -115,7 +137,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1529079037
+export SOURCE_DATE_EPOCH=1541635330
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
@@ -125,24 +147,27 @@ make  %{?_smp_mflags}
 
 pushd ../build32/
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+export ASFLAGS="$ASFLAGS --32"
 export CFLAGS="$CFLAGS -m32"
 export CXXFLAGS="$CXXFLAGS -m32"
 export LDFLAGS="$LDFLAGS -m32"
 %configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
+unset PKG_CONFIG_PATH
 pushd ../buildavx2/
 export CFLAGS="$CFLAGS -m64 -march=haswell"
 export CXXFLAGS="$CXXFLAGS -m64 -march=haswell"
 export LDFLAGS="$LDFLAGS -m64 -march=haswell"
-%configure --disable-static    --libdir=/usr/lib64/haswell --bindir=/usr/bin/haswell
+%configure --disable-static
 make  %{?_smp_mflags}
 popd
+unset PKG_CONFIG_PATH
 pushd ../buildavx512/
-export CFLAGS="$CFLAGS -m64 -march=skylake-avx512"
-export CXXFLAGS="$CXXFLAGS -m64 -march=skylake-avx512"
+export CFLAGS="$CFLAGS -m64 -march=skylake-avx512 -mprefer-vector-width=512"
+export CXXFLAGS="$CXXFLAGS -m64 -march=skylake-avx512 -mprefer-vector-width=512"
 export LDFLAGS="$LDFLAGS -m64 -march=skylake-avx512"
-%configure --disable-static    --libdir=/usr/lib64/haswell/avx512_1 --bindir=/usr/bin/haswell/avx512_1
+%configure --disable-static
 make  %{?_smp_mflags}
 popd
 %check
@@ -151,10 +176,22 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
+cd ../build32;
+make VERBOSE=1 V=1 %{?_smp_mflags} check || : || :
+cd ../buildavx2;
+make VERBOSE=1 V=1 %{?_smp_mflags} check || : || :
+cd ../buildavx512;
+make VERBOSE=1 V=1 %{?_smp_mflags} check || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1529079037
+export SOURCE_DATE_EPOCH=1541635330
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/flac
+cp COPYING.FDL %{buildroot}/usr/share/package-licenses/flac/COPYING.FDL
+cp COPYING.GPL %{buildroot}/usr/share/package-licenses/flac/COPYING.GPL
+cp COPYING.LGPL %{buildroot}/usr/share/package-licenses/flac/COPYING.LGPL
+cp COPYING.Xiph %{buildroot}/usr/share/package-licenses/flac/COPYING.Xiph
+cp doc/html/license.html %{buildroot}/usr/share/package-licenses/flac/doc_html_license.html
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
@@ -164,11 +201,11 @@ for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
 popd
-pushd ../buildavx2/
-%make_install
-popd
 pushd ../buildavx512/
-%make_install
+%make_install_avx512
+popd
+pushd ../buildavx2/
+%make_install_avx2
 popd
 %make_install
 
@@ -200,6 +237,7 @@ popd
 /usr/include/FLAC/ordinals.h
 /usr/include/FLAC/stream_decoder.h
 /usr/include/FLAC/stream_encoder.h
+/usr/lib64/haswell/avx512_1/libFLAC.so
 /usr/lib64/haswell/libFLAC.so
 /usr/lib64/libFLAC++.so
 /usr/lib64/libFLAC.so
@@ -219,7 +257,6 @@ popd
 %files doc
 %defattr(0644,root,root,0755)
 %doc /usr/share/doc/flac/*
-%doc /usr/share/man/man1/*
 /usr/share/doc/flac-1.3.2/FLAC.tag
 /usr/share/doc/flac-1.3.2/html/api/_09_2all_8h_source.html
 /usr/share/doc/flac-1.3.2/html/api/_09_2export_8h.html
@@ -487,7 +524,6 @@ popd
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/haswell/avx512_1/libFLAC.so
 /usr/lib64/haswell/avx512_1/libFLAC.so.8
 /usr/lib64/haswell/avx512_1/libFLAC.so.8.3.0
 /usr/lib64/haswell/libFLAC.so.8
@@ -503,3 +539,16 @@ popd
 /usr/lib32/libFLAC++.so.6.3.0
 /usr/lib32/libFLAC.so.8
 /usr/lib32/libFLAC.so.8.3.0
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/flac/COPYING.FDL
+/usr/share/package-licenses/flac/COPYING.GPL
+/usr/share/package-licenses/flac/COPYING.LGPL
+/usr/share/package-licenses/flac/COPYING.Xiph
+/usr/share/package-licenses/flac/doc_html_license.html
+
+%files man
+%defattr(0644,root,root,0755)
+/usr/share/man/man1/flac.1
+/usr/share/man/man1/metaflac.1
