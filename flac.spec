@@ -4,7 +4,7 @@
 #
 Name     : flac
 Version  : 1.3.2
-Release  : 26
+Release  : 27
 URL      : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Source0  : http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
 Summary  : Free Lossless Audio Codec Library
@@ -48,7 +48,6 @@ Patch1: cve-2017-6888.patch
 Summary: bin components for the flac package.
 Group: Binaries
 Requires: flac-license = %{version}-%{release}
-Requires: flac-man = %{version}-%{release}
 
 %description bin
 bin components for the flac package.
@@ -60,6 +59,7 @@ Group: Development
 Requires: flac-lib = %{version}-%{release}
 Requires: flac-bin = %{version}-%{release}
 Provides: flac-devel = %{version}-%{release}
+Requires: flac = %{version}-%{release}
 
 %description dev
 dev components for the flac package.
@@ -133,21 +133,25 @@ popd
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1545946059
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffast-math -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1565860214
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffast-math -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffast-math -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -ftree-loop-vectorize -mzero-caller-saved-regs=used "
 %configure --disable-static
 make  %{?_smp_mflags}
 
 pushd ../build32/
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
-export ASFLAGS="$ASFLAGS --32"
-export CFLAGS="$CFLAGS -m32"
-export CXXFLAGS="$CXXFLAGS -m32"
-export LDFLAGS="$LDFLAGS -m32"
+export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32"
 %configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
@@ -160,7 +164,7 @@ export LDFLAGS="$LDFLAGS -m64 -march=haswell"
 make  %{?_smp_mflags}
 popd
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
@@ -171,7 +175,7 @@ cd ../buildavx2;
 make VERBOSE=1 V=1 %{?_smp_mflags} check || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1545946059
+export SOURCE_DATE_EPOCH=1565860214
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/flac
 cp COPYING.FDL %{buildroot}/usr/share/package-licenses/flac/COPYING.FDL
@@ -329,14 +333,12 @@ popd
 /usr/share/doc/flac-1.3.2/html/api/format_8h.html
 /usr/share/doc/flac-1.3.2/html/api/format_8h_source.html
 /usr/share/doc/flac-1.3.2/html/api/functions.html
-/usr/share/doc/flac-1.3.2/html/api/functions_0x7e.html
 /usr/share/doc/flac-1.3.2/html/api/functions_b.html
 /usr/share/doc/flac-1.3.2/html/api/functions_c.html
 /usr/share/doc/flac-1.3.2/html/api/functions_d.html
 /usr/share/doc/flac-1.3.2/html/api/functions_e.html
 /usr/share/doc/flac-1.3.2/html/api/functions_f.html
 /usr/share/doc/flac-1.3.2/html/api/functions_func.html
-/usr/share/doc/flac-1.3.2/html/api/functions_func_0x7e.html
 /usr/share/doc/flac-1.3.2/html/api/functions_func_c.html
 /usr/share/doc/flac-1.3.2/html/api/functions_func_d.html
 /usr/share/doc/flac-1.3.2/html/api/functions_func_e.html
@@ -354,6 +356,7 @@ popd
 /usr/share/doc/flac-1.3.2/html/api/functions_func_u.html
 /usr/share/doc/flac-1.3.2/html/api/functions_func_v.html
 /usr/share/doc/flac-1.3.2/html/api/functions_func_w.html
+/usr/share/doc/flac-1.3.2/html/api/functions_func_~.html
 /usr/share/doc/flac-1.3.2/html/api/functions_g.html
 /usr/share/doc/flac-1.3.2/html/api/functions_h.html
 /usr/share/doc/flac-1.3.2/html/api/functions_i.html
@@ -370,6 +373,7 @@ popd
 /usr/share/doc/flac-1.3.2/html/api/functions_v.html
 /usr/share/doc/flac-1.3.2/html/api/functions_vars.html
 /usr/share/doc/flac-1.3.2/html/api/functions_w.html
+/usr/share/doc/flac-1.3.2/html/api/functions_~.html
 /usr/share/doc/flac-1.3.2/html/api/globals.html
 /usr/share/doc/flac-1.3.2/html/api/globals_defs.html
 /usr/share/doc/flac-1.3.2/html/api/globals_enum.html
