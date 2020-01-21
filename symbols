@@ -618,3 +618,4 @@ libFLAC.so.8:_ZGVeN16vv___powf_finite
 libFLAC.so.8:_ZGVeN8v___exp_finite
 libFLAC.so.8:_ZGVeN8v___log_finite
 libFLAC.so.8:_ZGVeN8vv___pow_finite
+libFLAC.so.8:get_client_data_from_decoder
