@@ -5,9 +5,9 @@
 %define keepstatic 1
 Name     : flac
 Version  : 1.3.3
-Release  : 32
-URL      : /insilications/build/clearlinux/packages/flac/flac-1.3.3.zip
-Source0  : /insilications/build/clearlinux/packages/flac/flac-1.3.3.zip
+Release  : 33
+URL      : file:///insilications/build/clearlinux/packages/flac/flac-1.3.3.zip
+Source0  : file:///insilications/build/clearlinux/packages/flac/flac-1.3.3.zip
 Summary  : Free Lossless Audio Codec Library
 Group    : Development/Tools
 License  : GPL-2.0 LGPL-2.1 zlib-acknowledgement
@@ -17,7 +17,14 @@ Requires: flac-man = %{version}-%{release}
 BuildRequires : buildreq-cmake
 BuildRequires : docbook-utils
 BuildRequires : doxygen
+BuildRequires : findutils
+BuildRequires : gcc-dev32
+BuildRequires : gcc-libgcc32
+BuildRequires : gcc-libstdc++32
+BuildRequires : glibc-dev32
+BuildRequires : glibc-libc32
 BuildRequires : libogg-dev
+BuildRequires : libogg-dev32
 BuildRequires : libogg-staticdev
 BuildRequires : nasm-bin
 BuildRequires : pkgconfig(ogg)
@@ -63,6 +70,17 @@ Requires: flac = %{version}-%{release}
 dev components for the flac package.
 
 
+%package dev32
+Summary: dev32 components for the flac package.
+Group: Default
+Requires: flac-lib32 = %{version}-%{release}
+Requires: flac-bin = %{version}-%{release}
+Requires: flac-dev = %{version}-%{release}
+
+%description dev32
+dev32 components for the flac package.
+
+
 %package doc
 Summary: doc components for the flac package.
 Group: Documentation
@@ -78,6 +96,14 @@ Group: Libraries
 
 %description lib
 lib components for the flac package.
+
+
+%package lib32
+Summary: lib32 components for the flac package.
+Group: Default
+
+%description lib32
+lib32 components for the flac package.
 
 
 %package man
@@ -97,26 +123,38 @@ Requires: flac-dev = %{version}-%{release}
 staticdev components for the flac package.
 
 
+%package staticdev32
+Summary: staticdev32 components for the flac package.
+Group: Default
+Requires: flac-dev = %{version}-%{release}
+
+%description staticdev32
+staticdev32 components for the flac package.
+
+
 %prep
 %setup -q -n flac-1.3.3
 cd %{_builddir}/flac-1.3.3
+pushd ..
+cp -a flac-1.3.3 build32
+popd
 
 %build
 ## build_prepend content
-find . -type f -name 'configure*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
-find . -type f -name '*.ac' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
-find . -type f -name 'libtool*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
-find . -type f -name '*.m4' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
-find . -type f -name '*.mk' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
-find . -type f -name '*.sh' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
-echo "AM_MAINTAINER_MODE([disable])" >> configure.ac
-find . -type f -name 'config.status' -exec touch {} \;
+#find . -type f -name 'configure*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name '*.ac' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name 'libtool*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name '*.m4' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name '*.mk' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name '*.sh' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#echo "AM_MAINTAINER_MODE([disable])" >> configure.ac
+#find . -type f -name 'config.status' -exec touch {} \;
 ## build_prepend end
 unset http_proxy
 unset https_proxy
 unset no_proxy
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1595297594
+export SOURCE_DATE_EPOCH=1596172782
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -140,22 +178,49 @@ export NM=gcc-nm
 ## altflags1 end
 %autogen  --enable-shared --enable-static --disable-maintainer-mode
 ## make_prepend content
-find . -type f -name 'Makefile*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
-find . -type f -name 'libtool*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
-find . -type f -name 'config.status' -exec touch {} \;
+#find . -type f -name 'Makefile*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name 'libtool*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name 'config.status' -exec touch {} \;
 ## make_prepend end
 make  %{?_smp_mflags}  V=1 VERBOSE=1
 
-%check
-export LANG=C.UTF-8
-unset http_proxy
-unset https_proxy
-unset no_proxy
-make %{?_smp_mflags} check || :
+pushd ../build32/
+## build_prepend content
+#find . -type f -name 'configure*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name '*.ac' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name 'libtool*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name '*.m4' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name '*.mk' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name '*.sh' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#echo "AM_MAINTAINER_MODE([disable])" >> configure.ac
+#find . -type f -name 'config.status' -exec touch {} \;
+## build_prepend end
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
+%autogen  --enable-shared --enable-static --disable-maintainer-mode  --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
+## make_prepend content
+#find . -type f -name 'Makefile*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name 'libtool*' -exec sed -i 's/\-fPIC/\-fpic/g' {} \;
+#find . -type f -name 'config.status' -exec touch {} \;
+## make_prepend end
+make  %{?_smp_mflags}  V=1 VERBOSE=1
+popd
 
 %install
-export SOURCE_DATE_EPOCH=1595297594
+export SOURCE_DATE_EPOCH=1596172782
 rm -rf %{buildroot}
+pushd ../build32/
+%make_install32
+if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
+then
+pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do ln -s $i 32$i ; done
+popd
+fi
+popd
 %make_install
 
 %files
@@ -188,6 +253,15 @@ rm -rf %{buildroot}
 /usr/lib64/pkgconfig/flac.pc
 /usr/share/aclocal/*.m4
 
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libFLAC++.so
+/usr/lib32/libFLAC.so
+/usr/lib32/pkgconfig/32flac++.pc
+/usr/lib32/pkgconfig/32flac.pc
+/usr/lib32/pkgconfig/flac++.pc
+/usr/lib32/pkgconfig/flac.pc
+
 %files doc
 %defattr(0644,root,root,0755)
 %doc /usr/share/doc/flac/*
@@ -199,6 +273,13 @@ rm -rf %{buildroot}
 /usr/lib64/libFLAC.so.8
 /usr/lib64/libFLAC.so.8.3.0
 
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libFLAC++.so.6
+/usr/lib32/libFLAC++.so.6.3.0
+/usr/lib32/libFLAC.so.8
+/usr/lib32/libFLAC.so.8.3.0
+
 %files man
 %defattr(0644,root,root,0755)
 /usr/share/man/man1/flac.1
@@ -208,3 +289,8 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 /usr/lib64/libFLAC++.a
 /usr/lib64/libFLAC.a
+
+%files staticdev32
+%defattr(-,root,root,-)
+/usr/lib32/libFLAC++.a
+/usr/lib32/libFLAC.a
